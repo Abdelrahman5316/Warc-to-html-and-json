@@ -1,6 +1,6 @@
 # Warc-to-html-and-json
 This code converts warc files into html and json files.
-<h2>What is Internet Archive?>
+<h2>What is Internet Archive?</h2>
   <p>
     The Internet Archive is a non-profit digital library that aims to provide universal access to knowledge and preserve digital content for future generations
   </p>
@@ -28,6 +28,8 @@ it is a format of compressed file containing web pages.
   2) Copy one line
   <br/>
   3)Go to your browser then write https://data.commoncrawl.org/ then paste the line you copied and place it after the forward slash
+  <br/>
   4)Finally, after the download is complete you will have your compressed warc file
+  <br/>
   5)If you want more compressed warc files for the same year repeat steps 2 & 3 with more lines form the path text file
 </p>
