@@ -1,5 +1,6 @@
 import os
 import re
+from datetime import datetime
 import json
 import gzip
 import bs4
@@ -53,15 +54,74 @@ for warc_name in os.listdir(files):
 
                 print(f"Saved HTML file: {filename}")
                 exsoup=bs4.BeautifulSoup(html_content,'html.parser')
+                pattern1=r'(\b\d{4}.\d{1,2}.\d{1,2}\b)'
+                pattern2=r'(\b\d{1,2}\s\w+\s\d{4}\b)'
                 ele=exsoup.select('h1')
+                body=exsoup.select('body')
+                if body:
+                    content=str(body[0].getText())
                 if ele:
                     header=ele[0].getText()
                 else:
                     header=""
+                # Extract date from <meta> tag
+                meta_date = exsoup.find('meta', property='article:published_time')
+                if meta_date:
+                    meta_date = meta_date.get('content')
+                match1=re.findall(pattern1,content)
+                match2=re.findall(pattern2,content)
+                
+                
+                # Extract date from <time> tag
+                time_date = exsoup.find('time')
+                if time_date:
+                    time_date = time_date.get('datetime')
+
+                # Print the extracted date
+                if meta_date:
+                     #print('Date from meta tag:', meta_date)
+                     meta_date=meta_date[:10]
+                     date=meta_date
+                     print('meta',date)
+                elif time_date:
+                    #print('Date from time tag:', time_date)
+                    time_date=time_date[:10]
+                    date=time_date
+                    print('time',date)
+                    
+                elif  match1:
+                    #print(match1[0])
+                    date_str=match1[0]
+                    try:
+                        date_obj = datetime.strptime(date_str, '%Y.%m.%d')
+                        formatted_date = date_obj.strftime('%Y-%m-%d')
+                        #content = content.replace(date_string, formatted_date)
+                        date=formatted_date
+                    except ValueError:
+                                pass
+                elif match2:
+                    for match in match2:
+                        date_string = match
+                        try:
+                            date_obj = datetime.strptime(date_string, '%d %B %Y')
+                            formatted_date = date_obj.strftime('%Y-%m-%d')
+                            #content = content.replace(date_string, formatted_date)
+                            date=formatted_date
+                        except ValueError:
+                                pass
+                else:
+                    #print('Date not found.')
+                    date=""
+                try:
+                    datetime.strptime(date, "%Y-%m-%d")
+                    print(date)
+                except ValueError:
+                    print("Date not found or not in the correct format (YYYY-MM-DD).")
                 # Create a dictionary for JSON data
                 json_data = {
                     'filename': filename,
                     'header':header,
+                    'publishing_date':date,
                     'record_id': record_id,
                     'content_type': record.http_headers.get_header('Content-Type'),
                     'encoding_used': encoding_used,
