@@ -19,7 +19,7 @@ for warc_name in os.listdir(files):
     output_folder_json = f'{year}_json'
     os.makedirs(output_folder_json, exist_ok=True)
     # Open WARC file
-    with gzip.open('CC-NEWS-20160826124520-00000.warc.gz', 'rb') as warc_file:
+    with gzip.open(warc_name, 'rb') as warc_file:
         # Create ArchiveIterator
         for record in ArchiveIterator(warc_file):
             # Check if the record is a response containing HTML content
@@ -82,12 +82,12 @@ for warc_name in os.listdir(files):
                      #print('Date from meta tag:', meta_date)
                      meta_date=meta_date[:10]
                      date=meta_date
-                     print('meta',date)
+                     #print('meta',date)
                 elif time_date:
                     #print('Date from time tag:', time_date)
                     time_date=time_date[:10]
                     date=time_date
-                    print('time',date)
+                    #print('time',date)
                     
                 elif  match1:
                     #print(match1[0])
